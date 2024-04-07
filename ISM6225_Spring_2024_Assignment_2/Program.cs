@@ -1,12 +1,4 @@
-﻿/* 
- 
-YOU ARE NOT ALLOWED TO MODIFY ANY FUNCTION DEFINIDTION's PROVIDED.
-WRITE YOUR CODE IN THE RESPECTIVE QUESTION FUNCTION BLOCK
-
-
-*/
-
-using System.Text;
+﻿using System.Text;
 
 namespace ISM6225_Spring_2024_Assignment_2
 {
@@ -48,13 +40,13 @@ namespace ISM6225_Spring_2024_Assignment_2
 
             //Question 6:
             Console.WriteLine("Question 6:");
-            int[] nums5 = { 3,6,9,1 };
+            int[] nums5 = { 3, 6, 9, 1 };
             int maxGap = MaximumGap(nums5);
             Console.WriteLine(maxGap);
 
             //Question 7:
             Console.WriteLine("Question 7:");
-            int[] nums6 = { 2,1,2 };
+            int[] nums6 = { 2, 1, 2 };
             int largestPerimeterResult = LargestPerimeter(nums6);
             Console.WriteLine(largestPerimeterResult);
 
@@ -99,15 +91,34 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                // If the input array is empty, return 0 
+                if (nums.Length == 0)
+                {
+                    return 0;
+                }
+
+                int j = 0; // Initialize a pointer j to track unique elements
+                for (int i = 1; i < nums.Length; i++)
+                {
+                    // If the current element is different from the previous unique element,update nums[j] to the current element to keep track of unique elements
+                    if (nums[i] != nums[j])
+                    {
+                        j++;
+                        nums[j] = nums[i];
+                    }
+                }
+
+                int k = j + 1; // Number of unique elements is j + 1
+                return k;
             }
             catch (Exception)
             {
-                throw;
+                throw; // Rethrow any exception encountered
             }
         }
-
+        /* SELF REFLECTION:
+         Learned the importance of maintaining two pointers to efficiently track unique elements in a sorted array. Additionally, 
+         handling edge cases like an empty array helped me consider all possible scenarios. 
         /*
         
         Question 2:
@@ -134,23 +145,51 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return new List<int>();
+                // Check if the input array is null or empty
+                if (nums == null || nums.Length == 0)
+                {
+                    // If the array is empty, return an empty list
+                    return new List<int>();
+                }
+
+                // Initialize an index variable to track non-zero elements
+                int index = 0;
+                for (int i = 0; i < nums.Length; i++)
+                {
+                    // If the current element is non-zero, move it to the index position
+                    if (nums[i] != 0)
+                    {
+                        nums[index++] = nums[i];
+                    }
+                }
+                // Fill the remaining elements with zeros
+                while (index < nums.Length)
+                {
+                    nums[index++] = 0;
+                }
+
+                // Convert the modified array to IList<int>
+                IList<int> result = nums.ToList();
+
+                // Return the modified IList<int>
+                return result;
             }
             catch (Exception)
             {
-                throw;
+                throw; // Rethrow any exception encountered
             }
         }
+        /* SELF REFLECTION:
+        This question taught me the significance of using two pointers to efficiently move elements in an array without extra space. 
+        It emphasized the importance of optimizing algorithms for time complexity.
+       
 
         /*
-
         Question 3:
         Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.
 
         Notice that the solution set must not contain duplicate triplets.
 
- 
 
         Example 1:
 
@@ -185,49 +224,126 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return new List<IList<int>>();
+                IList<IList<int>> triplets = new List<IList<int>>();
+                if (nums == null || nums.Length < 3)
+                {
+                    return triplets; // Return empty list if array contains less than three elements
+                }
+
+                Array.Sort(nums); // Sort the array to easily identify duplicates and for binary search
+
+                for (int i = 0; i < nums.Length - 2; i++)
+                {
+                    if (i > 0 && nums[i] == nums[i - 1])
+                    {
+                        continue; // Skip duplicates to avoid duplicate triplets
+                    }
+
+                    int left = i + 1;
+                    int right = nums.Length - 1;
+
+                    while (left < right)
+                    {
+                        int sum = nums[i] + nums[left] + nums[right];
+                        if (sum == 0)
+                        {
+                            triplets.Add(new List<int> { nums[i], nums[left], nums[right] });
+
+                            // Skip duplicates for left and right pointers
+                            while (left < right && nums[left] == nums[left + 1])
+                            {
+                                left++;
+                            }
+                            while (left < right && nums[right] == nums[right - 1])
+                            {
+                                right--;
+                            }
+
+                            // Move pointers
+                            left++;
+                            right--;
+                        }
+                        else if (sum < 0)
+                        {
+                            left++;
+                        }
+                        else
+                        {
+                            right--;
+                        }
+                    }
+                }
+                return triplets;
             }
             catch (Exception)
             {
-                throw;
+                throw; // Rethrow any exception encountered
             }
         }
+        /* SELF REFLECTION:
+        Solving this problem improved my understanding of using multiple pointers to find unique combinations in an array. 
+        Managing duplicates and ensuring the correct output format were crucial aspects I had to consider.
 
         /*
 
-        Question 4:
-        Given a binary array nums, return the maximum number of consecutive 1's in the array.
+         Question 4:
+         Given a binary array nums, return the maximum number of consecutive 1's in the array.
 
-        Example 1:
+         Example 1:
 
-        Input: nums = [1,1,0,1,1,1]
-        Output: 3
-        Explanation: The first two digits or the last three digits are consecutive 1s. The maximum number of consecutive 1s is 3.
-        Example 2:
+         Input: nums = [1,1,0,1,1,1]
+         Output: 3
+         Explanation: The first two digits or the last three digits are consecutive 1s. The maximum number of consecutive 1s is 3.
+         Example 2:
 
-        Input: nums = [1,0,1,1,0,1]
-        Output: 2
- 
-        Constraints:
+         Input: nums = [1,0,1,1,0,1]
+         Output: 2
 
-        1 <= nums.length <= 105
-        nums[i] is either 0 or 1.
+         Constraints:
 
-        */
+         1 <= nums.length <= 105
+         nums[i] is either 0 or 1.
+
+         */
 
         public static int FindMaxConsecutiveOnes(int[] nums)
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                // Check if the input array is null or empty
+                if (nums == null || nums.Length == 0)
+                {
+                    return 0;
+                }
+
+                int maxCount = 0; //Variable to store the maximum consecutive count of 1s
+                int count = 0;  // Variable to store the current consecutive count of 1s
+
+                // Iterate through the array to find consecutive 1s
+                foreach (int num in nums)
+                {
+                    if (num == 1)
+                    {
+                        count++; // Increment count if the current element is 1
+                        maxCount = Math.Max(maxCount, count); // Update maxCount 
+                    }
+
+                    else
+                    {
+                        count = 0; // Reset count if the current element is not 1
+                    }
+                }
+
+                return maxCount; // Return the maximum consecutive count of 1s
             }
             catch (Exception)
             {
-                throw;
+                throw; // Rethrow any exception encountered
             }
         }
+        /* SELF REFLECTION:
+        Implementing this solution enhanced my skills in iterating through arrays and tracking consecutive elements efficiently. 
+        Handling edge cases like an empty array and understanding the problem constraints were essential for implementing a robust solution.
 
         /*
 
@@ -256,148 +372,231 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                // Check if the input binary number is negative
+                if (binary < 0)
+                {
+                    throw new ArgumentException("Input binary number cannot be negative");
+                }
+                // Handle the case when input is 0
+                if (binary == 0)
+                {
+                    return 0;
+                }
+
+                int decimalValue = 0; // Variable to store the decimal equivalent
+                int baseValue = 1;    // Variable to store the base value
+
+                // Convert binary to decimal using the given algorithm
+                while (binary > 0)
+                {
+                    int lastDigit = binary % 10;
+                    binary = binary / 10;
+
+                    decimalValue += lastDigit * baseValue;
+
+                    baseValue *= 2;
+                }
+                return decimalValue; // Return the decimal equivalent
             }
             catch (Exception)
             {
-                throw;
+                throw; // Rethrow any exception encountered
             }
         }
+        /* SELF REFLECTION:
+        This question enhanced my understanding of binary-to-decimal conversion algorithms and the importance of handling negative inputs and edge cases. 
+        It also emphasized the significance of implementing efficient solutions without bitwise operators.
 
-        /*
+         /*
 
-        Question:6
-        Given an integer array nums, return the maximum difference between two successive elements in its sorted form. If the array contains less than two elements, return 0.
-        You must write an algorithm that runs in linear time and uses linear extra space.
+         Question:6
+         Given an integer array nums, return the maximum difference between two successive elements in its sorted form. If the array contains less than two elements, return 0.
+         You must write an algorithm that runs in linear time and uses linear extra space.
 
-        Example 1:
+         Example 1:
 
-        Input: nums = [3,6,9,1]
-        Output: 3
-        Explanation: The sorted form of the array is [1,3,6,9], either (3,6) or (6,9) has the maximum difference 3.
-        Example 2:
+         Input: nums = [3,6,9,1]
+         Output: 3
+         Explanation: The sorted form of the array is [1,3,6,9], either (3,6) or (6,9) has the maximum difference 3.
+         Example 2:
 
-        Input: nums = [10]
-        Output: 0
-        Explanation: The array contains less than 2 elements, therefore return 0.
- 
+         Input: nums = [10]
+         Output: 0
+         Explanation: The array contains less than 2 elements, therefore return 0.
 
-        Constraints:
 
-        1 <= nums.length <= 105
-        0 <= nums[i] <= 109
+         Constraints:
 
-        */
+         1 <= nums.length <= 105
+         0 <= nums[i] <= 109
+
+         */
 
         public static int MaximumGap(int[] nums)
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                // Check if the input array is null or has less than two elements
+                if (nums == null || nums.Length < 2)
+                {
+                    throw new ArgumentException("Input array must contain at least two elements.");
+                }
+
+                Array.Sort(nums); // Sort the array
+
+                int maxGap = 0; // Variable to store the maximum gap between successive elements
+                for (int i = 1; i < nums.Length; i++)
+                {
+                    int gap = nums[i] - nums[i - 1]; // Calculate the gap between successive elements
+                    maxGap = Math.Max(maxGap, gap); // Update maxGap if necessary
+                }
+
+                return maxGap; // Return the maximum gap
             }
             catch (Exception)
             {
-                throw;
+                throw; // Rethrow any exception encountered
             }
         }
+        /* SELF REFLECTION:
+        Exploring this problem deepened my understanding of sorting algorithms and their applications in finding maximum differences
+        between elements. It also highlighted the importance of considering time and space complexity in algorithm design.
 
-        /*
+         /*
 
-        Question:7
-        Given an integer array nums, return the largest perimeter of a triangle with a non-zero area, formed from three of these lengths. If it is impossible to form any triangle of a non-zero area, return 0.
+         Question:7
+         Given an integer array nums, return the largest perimeter of a triangle with a non-zero area, formed from three of these lengths. If it is impossible to form any triangle of a non-zero area, return 0.
 
-        Example 1:
+         Example 1:
 
-        Input: nums = [2,1,2]
-        Output: 5
-        Explanation: You can form a triangle with three side lengths: 1, 2, and 2.
-        Example 2:
+         Input: nums = [2,1,2]
+         Output: 5
+         Explanation: You can form a triangle with three side lengths: 1, 2, and 2.
+         Example 2:
 
-        Input: nums = [1,2,1,10]
-        Output: 0
-        Explanation: 
-        You cannot use the side lengths 1, 1, and 2 to form a triangle.
-        You cannot use the side lengths 1, 1, and 10 to form a triangle.
-        You cannot use the side lengths 1, 2, and 10 to form a triangle.
-        As we cannot use any three side lengths to form a triangle of non-zero area, we return 0.
+         Input: nums = [1,2,1,10]
+         Output: 0
+         Explanation: 
+         You cannot use the side lengths 1, 1, and 2 to form a triangle.
+         You cannot use the side lengths 1, 1, and 10 to form a triangle.
+         You cannot use the side lengths 1, 2, and 10 to form a triangle.
+         As we cannot use any three side lengths to form a triangle of non-zero area, we return 0.
 
-        Constraints:
+         Constraints:
 
-        3 <= nums.length <= 104
-        1 <= nums[i] <= 106
+         3 <= nums.length <= 104
+         1 <= nums[i] <= 106
 
-        */
+         */
 
         public static int LargestPerimeter(int[] nums)
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                // Check if the input array is null 
+                if (nums == null || nums.Length < 3)
+                {
+                    throw new ArgumentException("Input array cannot be empty");
+                }
+
+                Array.Sort(nums); // Sort the array in ascending order
+
+                int maxPerimeter = 0;
+                for (int i = nums.Length - 1; i >= 2; i--)
+                {
+                    int side1 = nums[i];
+                    int side2 = nums[i - 1];
+                    int side3 = nums[i - 2];
+
+                    if (side1 < side2 + side3) // Check triangle inequality
+                    {
+                        maxPerimeter = side1 + side2 + side3;
+                        break; // Since the array is sorted, the first valid triangle found will have the largest perimeter
+                    }
+                }
+                return maxPerimeter; // Return maximum perimeter
             }
             catch (Exception)
             {
-                throw;
+                throw; // Rethrow any exception encountered
             }
         }
 
-        /*
+        /* SELF REFLECTION:
+           Solving this question improved my skills in array manipulation and understanding mathematical concepts like triangle inequality. 
+           Handling edge cases and optimizing the algorithm for efficiency were key takeaways from this problem.
 
-        Question:8
+             /*
 
-        Given two strings s and part, perform the following operation on s until all occurrences of the substring part are removed:
+             Question:8
 
-        Find the leftmost occurrence of the substring part and remove it from s.
-        Return s after removing all occurrences of part.
+             Given two strings s and part, perform the following operation on s until all occurrences of the substring part are removed:
 
-        A substring is a contiguous sequence of characters in a string.
+             Find the leftmost occurrence of the substring part and remove it from s.
+             Return s after removing all occurrences of part.
 
- 
+             A substring is a contiguous sequence of characters in a string.
 
-        Example 1:
 
-        Input: s = "daabcbaabcbc", part = "abc"
-        Output: "dab"
-        Explanation: The following operations are done:
-        - s = "daabcbaabcbc", remove "abc" starting at index 2, so s = "dabaabcbc".
-        - s = "dabaabcbc", remove "abc" starting at index 4, so s = "dababc".
-        - s = "dababc", remove "abc" starting at index 3, so s = "dab".
-        Now s has no occurrences of "abc".
-        Example 2:
+             Example 1:
 
-        Input: s = "axxxxyyyyb", part = "xy"
-        Output: "ab"
-        Explanation: The following operations are done:
-        - s = "axxxxyyyyb", remove "xy" starting at index 4 so s = "axxxyyyb".
-        - s = "axxxyyyb", remove "xy" starting at index 3 so s = "axxyyb".
-        - s = "axxyyb", remove "xy" starting at index 2 so s = "axyb".
-        - s = "axyb", remove "xy" starting at index 1 so s = "ab".
-        Now s has no occurrences of "xy".
+             Input: s = "daabcbaabcbc", part = "abc"
+             Output: "dab"
+             Explanation: The following operations are done:
+             - s = "daabcbaabcbc", remove "abc" starting at index 2, so s = "dabaabcbc".
+             - s = "dabaabcbc", remove "abc" starting at index 4, so s = "dababc".
+             - s = "dababc", remove "abc" starting at index 3, so s = "dab".
+             Now s has no occurrences of "abc".
+             Example 2:
 
-        Constraints:
+             Input: s = "axxxxyyyyb", part = "xy"
+             Output: "ab"
+             Explanation: The following operations are done:
+             - s = "axxxxyyyyb", remove "xy" starting at index 4 so s = "axxxyyyb".
+             - s = "axxxyyyb", remove "xy" starting at index 3 so s = "axxyyb".
+             - s = "axxyyb", remove "xy" starting at index 2 so s = "axyb".
+             - s = "axyb", remove "xy" starting at index 1 so s = "ab".
+             Now s has no occurrences of "xy".
 
-        1 <= s.length <= 1000
-        1 <= part.length <= 1000
-        s​​​​​​ and part consists of lowercase English letters.
+             Constraints:
 
-        */
+             1 <= s.length <= 1000
+             1 <= part.length <= 1000
+             s​​​​​​ and part consists of lowercase English letters.
+
+             */
 
         public static string RemoveOccurrences(string s, string part)
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return "";
+                // Check if the input string is null
+                if (string.IsNullOrEmpty(s))
+                {
+                    throw new ArgumentException("Input string cannot be null.");
+                }
+
+                int index;
+                while ((index = s.IndexOf(part)) != -1)
+                {
+                    // Remove the leftmost occurrence of the substring part
+                    s = s.Remove(index, part.Length);
+                }
+
+                return s; // Return the modified string after removing all occurrences
             }
             catch (Exception)
             {
-                throw;
+                throw; // Rethrow any exception encountered
             }
         }
+        /* SELF REFLECTION:
+        This problem enhanced my ability to manipulate strings and efficiently remove substrings from them. Understanding the logic 
+        behind removing occurrences and optimizing the algorithm for performance were valuable lessons learned from this question.
 
-        /* Inbuilt Functions - Don't Change the below functions */
+
+
+          /* Inbuilt Functions - Don't Change the below functions */
         static string ConvertIListToNestedList(IList<IList<int>> input)
         {
             StringBuilder sb = new StringBuilder();
